@@ -33,6 +33,7 @@ private:
 	QPushButton *findButton;
 	QPushButton *loadButton;
 	QPushButton *saveButton;
+	QPushButton *exportButton;
 
 	QMap<QString, QString> contacts;
 	QString oldName;
@@ -52,6 +53,7 @@ public slots:
 	void findContact();
 	void saveToFile();
 	void loadFromFile();
+	void exportAsVCard();
 
 };
 

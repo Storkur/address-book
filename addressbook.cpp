@@ -34,6 +34,8 @@ AddressBook::AddressBook(QWidget *parent)
 	saveButton = new QPushButton(tr("Save"));
 	saveButton->setEnabled(false);
 	saveButton->setToolTip(tr("Save contacts to a file"));
+	exportButton  = new QPushButton(tr("Export"));
+	exportButton->setEnabled(false);
 
 	dialog = new FindDialog;
 
@@ -47,6 +49,7 @@ AddressBook::AddressBook(QWidget *parent)
 	connect(findButton, SIGNAL(clicked()),this, SLOT(findContact()));
 	connect(loadButton, SIGNAL(clicked()), this, SLOT(loadFromFile()));
 	connect(saveButton, SIGNAL(clicked()), this, SLOT(saveToFile()));
+	connect(exportButton, SIGNAL(clicked()), this, SLOT(exportAsVCard()));
 
 	QVBoxLayout *buttonLayout1 = new QVBoxLayout;
 	buttonLayout1->addWidget(addButton, Qt::AlignTop);
@@ -57,6 +60,7 @@ AddressBook::AddressBook(QWidget *parent)
 	buttonLayout1->addWidget(findButton);
 	buttonLayout1->addWidget(loadButton);
 	buttonLayout1->addWidget(saveButton);
+	buttonLayout1->addWidget(exportButton);
 	buttonLayout1->addStretch();
 
 	QHBoxLayout *buttonLayout2 = new QHBoxLayout;
@@ -331,6 +335,22 @@ void AddressBook::loadFromFile()
 	updateInterface(NavigationMode);
 }
 
+void AddressBook::exportAsVCard()
+{
+	QString name = nameLine->text();
+	QString address = addressText->toPlainText();
+	QString firstName;
+	QString lastName;
+	QStringList nameList;
+
+	int index = name.indexOf(" ");
+
+	if(index != -1)
+	{
+
+	}
+}
+
 void AddressBook::updateInterface(Mode mode)
 {
 	currentMode = mode;
@@ -356,6 +376,7 @@ void AddressBook::updateInterface(Mode mode)
 
 		loadButton->setEnabled(false);
 		saveButton->setEnabled(false);
+		exportButton->setEnabled(false);
 
 		break;
 	case NavigationMode:
@@ -382,7 +403,19 @@ void AddressBook::updateInterface(Mode mode)
 		loadButton->setEnabled(true);
 		saveButton->setEnabled(number >= 1);
 
+		exportButton->setEnabled(number >= 1);
+
 		break;
 	}
 }
+QPushButton *AddressBook::getExportButton() const
+{
+    return exportButton;
+}
+
+void AddressBook::setExportButton(QPushButton *value)
+{
+    exportButton = value;
+}
+
 
