@@ -26,6 +26,10 @@ AddressBook::AddressBook(QWidget *parent)
 	editButton->setEnabled(false);
 	removeButton = new QPushButton(tr("&Remove"));
 	removeButton->setEnabled(false);
+	findButton = new QPushButton(tr("&Find"));
+	findButton->setEnabled(false);
+
+	dialog = new FindDialog;
 
 	connect(addButton, SIGNAL(clicked()), this, SLOT(addContact()));
 	connect(submitButton, SIGNAL(clicked()), this, SLOT(submitContact()));
@@ -34,6 +38,7 @@ AddressBook::AddressBook(QWidget *parent)
 	connect(previousButton, SIGNAL(clicked()), this, SLOT(previous()));
 	connect(editButton, SIGNAL(clicked()), this, SLOT(editContact()));
 	connect(removeButton, SIGNAL(clicked()), this, SLOT(removeContact()));
+	connect(findButton, SIGNAL(clicked()),this, SLOT(findContact()));
 
 	QVBoxLayout *buttonLayout1 = new QVBoxLayout;
 	buttonLayout1->addWidget(addButton, Qt::AlignTop);
@@ -41,6 +46,7 @@ AddressBook::AddressBook(QWidget *parent)
 	buttonLayout1->addWidget(cancelButton);
 	buttonLayout1->addWidget(editButton);
 	buttonLayout1->addWidget(removeButton);
+	buttonLayout1->addWidget(findButton);
 	buttonLayout1->addStretch();
 
 	QHBoxLayout *buttonLayout2 = new QHBoxLayout;
@@ -78,6 +84,7 @@ void AddressBook::addContact()
 	cancelButton->show();
 	nextButton->setEnabled(false);
 	previousButton->setEnabled(false);
+	updateInterface(AddingMode);
 }
 
 void AddressBook::submitContact()
@@ -230,49 +237,71 @@ void AddressBook::removeContact()
 	updateInterface(NavigationMode);
 }
 
+void AddressBook::findContact()
+{
+	dialog->show();
+	if(dialog->exec() == QDialog::Accepted)
+	{
+		QString contactName = dialog->getFindText();
+		if(contacts.contains(contactName))
+		{
+			nameLine->setText(contactName);
+			addressText->setText(contacts.value(contactName));
+		}
+		else
+		{
+			QMessageBox::information(this, tr("Contact Not Found"),
+									 tr("Sorry, \"%1\" is not in your address book.").arg(contactName));
+			return;
+		}
+	}
+	updateInterface(NavigationMode);
+}
+
 void AddressBook::updateInterface(Mode mode)
 {
-	 currentMode = mode;
+	currentMode = mode;
 
-	 switch (currentMode) {
+	switch (currentMode) {
 
-	 case AddingMode:
-	 case EditingMode:
+	case AddingMode:
+	case EditingMode:
 
-		 nameLine->setReadOnly(false);
-		 nameLine->setFocus(Qt::OtherFocusReason);
-		 addressText->setReadOnly(false);
+		nameLine->setReadOnly(false);
+		nameLine->setFocus(Qt::OtherFocusReason);
+		addressText->setReadOnly(false);
 
-		 addButton->setEnabled(false);
-		 editButton->setEnabled(false);
-		 removeButton->setEnabled(false);
+		addButton->setEnabled(false);
+		editButton->setEnabled(false);
+		removeButton->setEnabled(false);
 
-		 nextButton->setEnabled(false);
-		 previousButton->setEnabled(false);
+		nextButton->setEnabled(false);
+		previousButton->setEnabled(false);
 
-		 submitButton->show();
-		 cancelButton->show();
-		 break;
-	 case NavigationMode:
+		submitButton->show();
+		cancelButton->show();
+		break;
+	case NavigationMode:
 
-		 if (contacts.isEmpty()) {
-			 nameLine->clear();
-			 addressText->clear();
-		 }
+		if (contacts.isEmpty()) {
+			nameLine->clear();
+			addressText->clear();
+		}
 
-		 nameLine->setReadOnly(true);
-		 addressText->setReadOnly(true);
-		 addButton->setEnabled(true);
+		nameLine->setReadOnly(true);
+		addressText->setReadOnly(true);
+		addButton->setEnabled(true);
 
-		 int number = contacts.size();
-		 editButton->setEnabled(number >= 1);
-		 removeButton->setEnabled(number >= 1);
-		 nextButton->setEnabled(number > 1);
-		 previousButton->setEnabled(number >1 );
+		int number = contacts.size();
+		editButton->setEnabled(number >= 1);
+		removeButton->setEnabled(number >= 1);
+		nextButton->setEnabled(number > 1);
+		previousButton->setEnabled(number >1 );
+		findButton->setEnabled(number > 2);
 
-		 submitButton->hide();
-		 cancelButton->hide();
-		 break;
-	 }
- }
+		submitButton->hide();
+		cancelButton->hide();
+		break;
+	}
+}
 

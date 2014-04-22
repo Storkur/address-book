@@ -20,6 +20,7 @@ public:
 
 private:
 	void updateInterface(Mode mode);
+
 	QLineEdit *nameLine;
 	QTextEdit *addressText;
 	QPushButton *addButton;
@@ -29,10 +30,12 @@ private:
 	QPushButton *previousButton;
 	QPushButton *editButton;
 	QPushButton *removeButton;
+	QPushButton *findButton;
 
 	QMap<QString, QString> contacts;
 	QString oldName;
 	QString oldAddress;
+	FindDialog *dialog;
 
 	Mode currentMode;
 
@@ -44,6 +47,7 @@ public slots:
 	void previous();
 	void editContact();
 	void removeContact();
+	void findContact();
 
 };
 
