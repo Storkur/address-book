@@ -290,9 +290,9 @@ void AddressBook::saveToFile()
 									 file.errorString());
 			return;
 		}
-			QDataStream out(&file);
-			out.setVersion(QDataStream::Qt_4_5);
-			out << contacts;
+		QDataStream out(&file);
+		out.setVersion(QDataStream::Qt_4_5);
+		out << contacts;
 	}
 }
 
@@ -311,8 +311,8 @@ void AddressBook::loadFromFile()
 		if(!file.open(QIODevice::ReadOnly))
 		{
 			QMessageBox::information(this, tr("Unable to open file"),
-							 file.errorString());
-						 return;
+									 file.errorString());
+			return;
 		}
 		QDataStream in (&file);
 		in.setVersion(QDataStream::Qt_4_5);
@@ -363,6 +363,34 @@ void AddressBook::exportAsVCard()
 		return;
 
 	QFile file(fileName);
+
+	if(!file.open(QIODevice::WriteOnly))
+	{
+		QMessageBox::information(this, tr("Unable to open file"),
+								 file.errorString());
+		return;
+	}
+
+	QTextStream out(&file);
+
+	out << "BEGIN:VCARD" << "\n";
+	out << "VERSION:2.1" << "\n";
+	out << "N:" << lastName << ";" << firstName << "\n";
+
+	if (!nameList.isEmpty())
+		out << "FN:" << nameList.join(" ") << "\n";
+	else
+		out << "FN:" << firstName << "\n";
+
+	address.replace(";", "\\;", Qt::CaseInsensitive);
+	address.replace("\n", ";", Qt::CaseInsensitive);
+	address.replace(",", " ", Qt::CaseInsensitive);
+
+	out << "ADR;HOME:;" << address << "\n";
+	out << "END:VCARD" << "\n";
+
+	QMessageBox::information(this, tr("Export Successful"),
+							 tr("\"%1\" has been exported as a vCard.").arg(name));
 }
 
 void AddressBook::updateInterface(Mode mode)
@@ -422,14 +450,4 @@ void AddressBook::updateInterface(Mode mode)
 		break;
 	}
 }
-QPushButton *AddressBook::getExportButton() const
-{
-    return exportButton;
-}
-
-void AddressBook::setExportButton(QPushButton *value)
-{
-    exportButton = value;
-}
-
 
