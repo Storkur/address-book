@@ -31,6 +31,8 @@ private:
 	QPushButton *editButton;
 	QPushButton *removeButton;
 	QPushButton *findButton;
+	QPushButton *loadButton;
+	QPushButton *saveButton;
 
 	QMap<QString, QString> contacts;
 	QString oldName;
@@ -48,6 +50,8 @@ public slots:
 	void editContact();
 	void removeContact();
 	void findContact();
+	void saveToFile();
+	void loadFromFile();
 
 };
 
