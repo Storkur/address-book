@@ -347,8 +347,22 @@ void AddressBook::exportAsVCard()
 
 	if(index != -1)
 	{
-
+		nameList = name.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		firstName = nameList.first();
+		lastName =  nameList.last();
 	}
+	else
+	{
+		firstName = name;
+		lastName = "";
+	}
+
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Export Contact"), "",
+													tr("vCard Files (*.vcf);;All Files (*)"));
+	if(fileName.isEmpty())
+		return;
+
+	QFile file(fileName);
 }
 
 void AddressBook::updateInterface(Mode mode)
